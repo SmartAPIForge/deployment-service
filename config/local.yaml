@@ -1,0 +1,5 @@
+env: "local" # dev, prod
+storage_path: "./storage/deployment.db"
+grpc: 
+  port: 50057
+  timeout: 10h

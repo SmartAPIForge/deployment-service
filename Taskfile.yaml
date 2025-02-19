@@ -1,0 +1,15 @@
+version: "3"
+
+tasks:
+  build:
+    desc: "Build"
+    cmds:
+      - go build ./cmd/deployment/main.go
+  run-dev:
+    desc: "Run in dev"
+    cmds:
+      - go build ./cmd/deployment/main.go && ./main -config=./config/local.yaml
+  run-prod:
+    desc: "Run in prod"
+    cmds:
+      - ./main
