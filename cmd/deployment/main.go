@@ -22,8 +22,16 @@ func main() {
 
 	log.Info("Starting deployment service")
 
-	application := app.NewApp(log, cfg.GRPC.Port, cfg.GRPC.Timeout)
-	application.GRPCServer.MustRun()
+	application, err := app.NewApp(log, cfg.GRPC.Port, cfg.GRPC.Timeout)
+	if err != nil {
+		log.Error("Error creating application: ", err)
+		os.Exit(1)
+	}
+
+	err = application.Start()
+	if err != nil {
+		return
+	}
 
 	stopWait(application)
 }
