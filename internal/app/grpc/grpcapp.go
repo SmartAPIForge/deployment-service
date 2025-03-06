@@ -56,9 +56,11 @@ func (a *GrpcApp) MustRun() {
 
 	a.log.Info("grpc server started", slog.String("addr", l.Addr().String()))
 
-	if err := a.gRPCServer.Serve(l); err != nil {
-		panic(fmt.Errorf("%s: %w", op, err))
-	}
+	go func() {
+		if err := a.gRPCServer.Serve(l); err != nil {
+			panic(fmt.Errorf("%s: %w", op, err))
+		}
+	}()
 }
 
 func (a *GrpcApp) Stop() {
