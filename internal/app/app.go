@@ -3,9 +3,11 @@ package app
 import (
 	grpcapp "deployment-service/internal/app/grpc"
 	kafkaapp "deployment-service/internal/app/kafka"
+	"deployment-service/internal/config"
 	deploymentserver "deployment-service/internal/grpc/deployment"
+	"deployment-service/internal/kafka/topics"
 	"log/slog"
-	"time"
+	"strings"
 )
 
 type App struct {
@@ -16,23 +18,24 @@ type App struct {
 
 func NewApp(
 	log *slog.Logger,
-	grpcPort int,
-	tokenTTL time.Duration,
+	cfg *config.Config,
 ) (*App, error) {
 	deploymentService := deploymentserver.DeploymentServer{}
 
+	deploymentRequestHandler := topics.NewDeploymentRequestHandler(log, cfg.Kafka.Topics.DeploymentRequest)
+
 	consumer, err := kafkaapp.NewConsumer(
 		log,
-		"localhost:29092",
+		strings.Join(cfg.Kafka.BootstrapServers, ","),
 		"deployment-consumer",
-		[]string{"NewZip"},
+		[]topics.Handler{deploymentRequestHandler},
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &App{
-		GRPCServer:    grpcapp.NewGrpcApp(log, deploymentService, grpcPort),
+		GRPCServer:    grpcapp.NewGrpcApp(log, deploymentService, cfg.GRPC.Port),
 		KafkaConsumer: consumer,
 		logger:        log,
 	}, nil

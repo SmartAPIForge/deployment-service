@@ -10,9 +10,24 @@ import (
 )
 
 type Config struct {
-	Env         string     `yaml:"env" env-default:"local"`
-	StoragePath string     `yaml:"storage_path" env-required:"true"`
-	GRPC        GRPCConfig `yaml:"grpc"`
+	Env         string      `yaml:"env" env-default:"local"`
+	StoragePath string      `yaml:"storage_path" env-required:"true"`
+	GRPC        GRPCConfig  `yaml:"grpc"`
+	Kafka       KafkaConfig `yaml:"kafka"`
+}
+
+type TopicConfig struct {
+	Name    string `yaml:"name"`
+	Enabled bool   `yaml:"enabled"`
+}
+
+type TopicsConfig struct {
+	DeploymentRequest TopicConfig `yaml:"deployment_request"`
+}
+
+type KafkaConfig struct {
+	BootstrapServers []string     `yaml:"servers" env-required:"true"`
+	Topics           TopicsConfig `yaml:"topics"`
 }
 
 type GRPCConfig struct {
