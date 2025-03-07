@@ -44,12 +44,6 @@ func (s *DeploymentServer) AddServer(ctx context.Context, req *pb.AddServerReque
 		id = s.servers[len(s.servers)-1].Id + 1
 	}
 
-	previewServer := &pb.ServerPreview{
-		Id:   id,
-		Ip:   req.Ip,
-		Port: req.Port,
-		User: req.User,
-	}
 	newServer := &pb.Server{
 		Id:       id,
 		Ip:       req.Ip,
@@ -57,8 +51,14 @@ func (s *DeploymentServer) AddServer(ctx context.Context, req *pb.AddServerReque
 		User:     req.User,
 		Password: req.Password,
 	}
-
 	s.servers = append(s.servers, newServer)
+
+	previewServer := &pb.ServerPreview{
+		Id:   id,
+		Ip:   req.Ip,
+		Port: req.Port,
+		User: req.User,
+	}
 	return &pb.AddServerResponse{Server: previewServer}, nil
 }
 

@@ -3,3 +3,10 @@ storage_path: "./storage/deployment.db"
 grpc: 
   port: 50059
   timeout: 10h
+kafka:
+  servers:
+    - "localhost:29092"
+  topics:
+    deployment_request:
+      name: "NewZip"
+      enabled: true
