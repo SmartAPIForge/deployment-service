@@ -4,12 +4,13 @@ import (
 	deploymentserver "deployment-service/internal/grpc/deployment"
 	interceptorlogger "deployment-service/internal/interceptors"
 	"fmt"
+	"log/slog"
+	"net"
+
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log/slog"
-	"net"
 
 	"google.golang.org/grpc"
 )
@@ -20,7 +21,7 @@ type GrpcApp struct {
 	port       int
 }
 
-func NewGrpcApp(log *slog.Logger, deploymentService deploymentserver.DeploymentServer, port int) *GrpcApp {
+func NewGrpcApp(log *slog.Logger, deploymentService *deploymentserver.Server, port int) *GrpcApp {
 	loggingOpts := []logging.Option{
 		logging.WithLogOnEvents(
 			logging.PayloadReceived, logging.PayloadSent,
@@ -37,7 +38,8 @@ func NewGrpcApp(log *slog.Logger, deploymentService deploymentserver.DeploymentS
 		logging.UnaryServerInterceptor(interceptorlogger.InterceptorLogger(log), loggingOpts...),
 	))
 
-	deploymentserver.RegisterDeploymentServer(gRPCServer)
+	// Register the deployment service
+	deploymentserver.RegisterDeploymentServer(gRPCServer, deploymentService)
 
 	return &GrpcApp{
 		log:        log,

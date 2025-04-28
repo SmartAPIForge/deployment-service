@@ -5,11 +5,18 @@ tasks:
     desc: "Build"
     cmds:
       - go build ./cmd/deployment/main.go
-  run-dev:
+  run:
+    desc: "Build & Run"
+    deps:
+      - build
+    cmds:
+      - ./main -config=./config/local.yaml
+  db_raise:
+    desc: "Raise database in container"
+    cmds:
+      - docker compose up -d
+  init:
     desc: "Run in dev"
-    cmds:
-      - go build ./cmd/deployment/main.go && ./main -config=./config/local.yaml
-  run-prod:
-    desc: "Run in prod"
-    cmds:
-      - ./main
+    deps:
+      - db_raise
+      - run

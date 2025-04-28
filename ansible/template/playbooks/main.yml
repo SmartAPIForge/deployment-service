@@ -1,0 +1,6 @@
+---
+# Main playbook that imports all individual steps
+- import_playbook: 01-dependencies.yml
+- import_playbook: 02-docker-install.yml
+- import_playbook: 03-compose.yml
+- import_playbook: 04-deploy-application.yml 

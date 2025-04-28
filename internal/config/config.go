@@ -2,18 +2,37 @@ package config
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
+const (
+	EnvLocal = "local"
+	EnvDev   = "dev"
+	EnvProd  = "prod"
+)
+
 type Config struct {
-	Env         string      `yaml:"env" env-default:"local"`
-	StoragePath string      `yaml:"storage_path" env-required:"true"`
-	GRPC        GRPCConfig  `yaml:"grpc"`
-	Kafka       KafkaConfig `yaml:"kafka"`
+	Env        string           `yaml:"env" env-default:"local"`
+	GRPC       GRPCConfig       `yaml:"grpc"`
+	Kafka      KafkaConfig      `yaml:"kafka"`
+	PostgresDb PostgresDbConfig `yaml:"postgres_db"`
+}
+
+type PostgresDbConfig struct {
+	Host string `yaml:"host" env-required:"true"`
+	Port uint   `yaml:"port" env-required:"true"`
+	User string `yaml:"user" env-required:"true"`
+	Pass string `yaml:"password" env-required:"true"`
+	Name string `yaml:"db_name" env-required:"true"`
+}
+
+type TestServerConfig struct {
+	Host       string `yaml:"host"`
+	User       string `yaml:"user"`
+	PrivateKey string `yaml:"private_key"`
 }
 
 type TopicConfig struct {
@@ -37,7 +56,6 @@ type GRPCConfig struct {
 
 func MustLoad() *Config {
 	configPath := fetchConfigPath()
-	fmt.Println("configPath: ", configPath)
 	if configPath == "" {
 		panic("config path is empty")
 	}
