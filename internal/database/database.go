@@ -4,9 +4,10 @@ import (
 	"deployment-service/internal/config"
 	"deployment-service/internal/model"
 	"fmt"
+	"log/slog"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log/slog"
 )
 
 // Service holds the database connection
@@ -29,7 +30,7 @@ func NewService(postgresDb config.PostgresDbConfig, log *slog.Logger) (*Service,
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	if err := db.AutoMigrate(&model.Server{}); err != nil {
+	if err := db.AutoMigrate(&model.Server{}, &model.Deployment{}); err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}
 

@@ -78,7 +78,7 @@ func (c *Consumer) handleKafkaMessage(msg *kafka.Message) {
 	handler, exists := c.handlers[topic]
 	if !exists {
 		c.logger.Warn("No handler for topic", "topic", topic)
-		//c.commitMessage(msg)
+		c.commitMessage(msg)
 		return
 	}
 

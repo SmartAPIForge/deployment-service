@@ -1,7 +1,6 @@
 package ssh
 
 import (
-	"bytes"
 	"deployment-service/internal/model"
 	"fmt"
 	"strconv"
@@ -124,26 +123,4 @@ func getMemoryInfo(client *ssh.Client, stats *ServerStats) error {
 	stats.MemoryPercent = float64(used) / float64(total) * 100.0
 
 	return nil
-}
-
-func runCommand(client *ssh.Client, cmd string) (string, error) {
-	session, err := client.NewSession()
-	if err != nil {
-		return "", fmt.Errorf("error with creating SSH-connection: %v", err)
-	}
-	defer func(session *ssh.Session) {
-		err := session.Close()
-		if err != nil {
-
-		}
-	}(session)
-
-	var stdout bytes.Buffer
-	session.Stdout = &stdout
-
-	if err := session.Run(cmd); err != nil {
-		return "", fmt.Errorf("error with command processing: %v", err)
-	}
-
-	return stdout.String(), nil
 }

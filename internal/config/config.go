@@ -14,6 +14,11 @@ const (
 	EnvProd  = "prod"
 )
 
+const (
+	ProjectStatusTopic = "ProjectStatus"
+	DeployPayloadTopic = "DeployPayload"
+)
+
 type Config struct {
 	Env        string           `yaml:"env" env-default:"local"`
 	GRPC       GRPCConfig       `yaml:"grpc"`

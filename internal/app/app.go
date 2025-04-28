@@ -6,6 +6,7 @@ import (
 	"deployment-service/internal/config"
 	"deployment-service/internal/database"
 	deploymentserver "deployment-service/internal/grpc/deployment"
+	"deployment-service/internal/kafka"
 	"deployment-service/internal/kafka/topics"
 	"fmt"
 	"log/slog"
@@ -15,6 +16,7 @@ import (
 type App struct {
 	GRPCServer    *grpcapp.GrpcApp
 	KafkaConsumer *kafkaapp.Consumer
+	KafkaProducer *kafka.Producer
 	dbService     *database.Service
 	logger        *slog.Logger
 }
@@ -28,11 +30,22 @@ func NewApp(
 		return nil, fmt.Errorf("failed to initialize database: %w", err)
 	}
 
+	// Initialize Kafka producer
+	kafkaProducer, err := kafka.NewProducer(log, strings.Join(cfg.Kafka.BootstrapServers, ","))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize Kafka producer: %w", err)
+	}
+
 	// Initialize deployment service
 	deploymentService := deploymentserver.NewDeploymentServer(dbService.GetDB(), log)
 
 	// Initialize Kafka consumer
-	deploymentRequestHandler := topics.NewDeploymentRequestHandler(dbService.GetDB(), log, cfg.Kafka.Topics.DeploymentRequest)
+	deploymentRequestHandler := topics.NewDeploymentRequestHandler(
+		dbService.GetDB(),
+		log,
+		cfg.Kafka.Topics.DeploymentRequest,
+		kafkaProducer,
+	)
 
 	consumer, err := kafkaapp.NewConsumer(
 		log,
@@ -47,6 +60,7 @@ func NewApp(
 	return &App{
 		GRPCServer:    grpcapp.NewGrpcApp(log, deploymentService, cfg.GRPC.Port),
 		KafkaConsumer: consumer,
+		KafkaProducer: kafkaProducer,
 		dbService:     dbService,
 		logger:        log,
 	}, nil
@@ -70,6 +84,7 @@ func (a *App) Start() error {
 func (a *App) Stop() {
 	a.logger.Info("Stopping application components")
 	a.KafkaConsumer.Stop()
+	a.KafkaProducer.Close()
 	a.GRPCServer.Stop()
 	a.dbService.Close()
 }
