@@ -1,5 +1,4 @@
 env: "local" # dev, prod
-storage_path: "./storage/deployment.db"
 grpc: 
   port: 50059
   timeout: 10h
@@ -10,3 +9,9 @@ kafka:
     deployment_request:
       name: "NewZip"
       enabled: true
+postgres_db:
+  host: localhost
+  port: 54324
+  user: postgres
+  password: postgres
+  db_name: deployment-service

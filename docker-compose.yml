@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: deployment-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: deployment-service
+    ports:
+      - "54324:5432"
+    volumes:
+      - deployment-postgres_data:/var/lib/postgresql/data
+
+volumes:
+  deployment-postgres_data:

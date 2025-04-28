@@ -1,0 +1,40 @@
+---
+- hosts: all
+  remote_user: ubuntu
+  become: true
+  tasks:
+    - name: Create destination directory
+      file:
+        path: "{{ DEST_DIR | default('/tmp/deployments') }}"
+        state: directory
+        mode: '0755'
+
+    - name: Download zip archive from S3 using curl
+      get_url:
+        url: "{{ S3_URL }}"
+        dest: "{{ DEST_DIR | default('/tmp/deployments') }}/{{ S3_DEST }}"
+        mode: '0644'
+
+    - name: Ensure unzip is installed
+      apt:
+        name: unzip
+        state: present
+
+    - name: Create directory for unzipping archive
+      file:
+        path: "{{ DEST_DIR | default('/tmp/deployments') }}/{{ UNZIP_DIR }}"
+        state: directory
+        mode: '0755'
+
+    - name: Unzip the archive
+      unarchive:
+        src: "{{ DEST_DIR | default('/tmp/deployments') }}/{{ S3_DEST }}"
+        dest: "{{ DEST_DIR | default('/tmp/deployments') }}/{{ UNZIP_DIR }}"
+        remote_src: yes
+
+    - name: Run docker-compose up in the unzipped directory
+      command: "docker compose up --build -d"
+      args:
+        chdir: "{{ DEST_DIR | default('/tmp/deployments') }}/{{ UNZIP_DIR }}"
+      environment:
+        HOST_PORT: "{{ HOST_PORT }}"
