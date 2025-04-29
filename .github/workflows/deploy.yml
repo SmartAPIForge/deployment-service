@@ -6,7 +6,9 @@ on:
     paths:
       - 'Dockerfile'
       - 'docker-compose.yml'
-      - 'src/**'
+      - 'ansible/**'
+      - 'cmd/**'
+      - 'internal/**'
       - 'config/**'
   workflow_dispatch:
 

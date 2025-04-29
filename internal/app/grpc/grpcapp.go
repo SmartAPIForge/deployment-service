@@ -51,7 +51,7 @@ func NewGrpcApp(log *slog.Logger, deploymentService *deploymentserver.Server, po
 func (a *GrpcApp) MustRun() {
 	const op = "grpcapp.MustRun"
 
-	l, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", a.port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", a.port))
 	if err != nil {
 		panic(fmt.Errorf("%s: %w", op, err))
 	}
