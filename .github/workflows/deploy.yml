@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github'
       - 'Dockerfile'
       - 'docker-compose.yml'
       - 'ansible/**'
