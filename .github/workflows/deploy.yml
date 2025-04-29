@@ -51,18 +51,9 @@ jobs:
             db_name: "${{ secrets.POSTGRES_DB }}"
           EOL
 
-      - name: Build and deploy with docker-compose
-        run: |
-          # Stop existing containers if running
-          docker-compose down || true
-          
-          # Build and start the services
-          docker-compose up -d --build
-
       - name: Run deployment
         run: |
-          go build ./cmd/deployment/main.go
-          ./main -config=./config/prod.yaml
+          task init
           
           echo "✅ Deployment successful!"
 
