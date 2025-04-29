@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.4
 
 require (
-	github.com/SmartAPIForge/protos v1.4.0
+	github.com/SmartAPIForge/protos v1.8.0
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/fatih/color v1.18.0
 	github.com/google/uuid v1.6.0
@@ -13,6 +13,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	golang.org/x/crypto v0.36.0
 	google.golang.org/grpc v1.70.0
+	google.golang.org/protobuf v1.36.4
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.25.12
 )
@@ -36,7 +37,6 @@ require (
 	golang.org/x/text v0.24.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250115164207-1a7da9e5054f // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250115164207-1a7da9e5054f // indirect
-	google.golang.org/protobuf v1.36.4 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )

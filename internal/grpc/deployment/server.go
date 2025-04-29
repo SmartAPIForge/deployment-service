@@ -4,6 +4,7 @@ import (
 	"context"
 	"deployment-service/internal/model"
 	"log/slog"
+	"time"
 
 	pb "github.com/SmartAPIForge/protos/gen/go/deployment"
 	"google.golang.org/grpc"
@@ -70,5 +71,107 @@ func (s *Server) RemoveServer(ctx context.Context, req *pb.RemoveServerRequest) 
 	// Check if any row was affected
 	return &pb.RemoveServerResponse{
 		Status: result.RowsAffected > 0,
+	}, nil
+}
+
+func (s *Server) GetDeployment(ctx context.Context, req *pb.GetDeploymentRequest) (*pb.GetDeploymentResponse, error) {
+	var deployment model.Deployment
+	result := s.db.First(&deployment, "id = ?", req.Id)
+	if result.Error != nil {
+		s.logger.Error("Failed to get deployment", slog.String("error", result.Error.Error()),
+			slog.String("deployment_id", req.Id))
+		return &pb.GetDeploymentResponse{}, result.Error
+	}
+
+	return &pb.GetDeploymentResponse{
+		Deployment: deployment.ToProto(),
+	}, nil
+}
+
+func (s *Server) ListDeployments(ctx context.Context, req *pb.ListDeploymentsRequest) (*pb.ListDeploymentsResponse, error) {
+	var deployments []model.Deployment
+	query := s.db
+
+	if req.Owner != "" {
+		query = query.Where("owner = ?", req.Owner)
+	}
+
+	result := query.Find(&deployments)
+	if result.Error != nil {
+		s.logger.Error("Failed to list deployments", slog.String("error", result.Error.Error()))
+		return &pb.ListDeploymentsResponse{}, result.Error
+	}
+
+	protoDeployments := make([]*pb.Deployment, len(deployments))
+	for i, deployment := range deployments {
+		protoDeployments[i] = deployment.ToProto()
+	}
+
+	return &pb.ListDeploymentsResponse{
+		Deployments: protoDeployments,
+	}, nil
+}
+
+func (s *Server) DeleteDeployment(ctx context.Context, req *pb.DeleteDeploymentRequest) (*pb.DeleteDeploymentResponse, error) {
+	result := s.db.Delete(&model.Deployment{}, "id = ?", req.Id)
+	if result.Error != nil {
+		s.logger.Error("Failed to delete deployment", slog.String("error", result.Error.Error()),
+			slog.String("deployment_id", req.Id))
+		return &pb.DeleteDeploymentResponse{Success: false}, result.Error
+	}
+
+	return &pb.DeleteDeploymentResponse{
+		Success: result.RowsAffected > 0,
+	}, nil
+}
+
+func (s *Server) StartDeployment(ctx context.Context, req *pb.StartDeploymentRequest) (*pb.StartDeploymentResponse, error) {
+	var deployment model.Deployment
+	result := s.db.First(&deployment, "id = ?", req.Id)
+	if result.Error != nil {
+		s.logger.Error("Failed to find deployment", slog.String("error", result.Error.Error()),
+			slog.String("deployment_id", req.Id))
+		return &pb.StartDeploymentResponse{}, result.Error
+	}
+
+	// Update deployment status and start time
+	deployment.Status = "running"
+	deployment.StartTime = time.Now()
+
+	result = s.db.Save(&deployment)
+	if result.Error != nil {
+		s.logger.Error("Failed to start deployment", slog.String("error", result.Error.Error()),
+			slog.String("deployment_id", req.Id))
+		return &pb.StartDeploymentResponse{}, result.Error
+	}
+
+	return &pb.StartDeploymentResponse{
+		Deployment: deployment.ToProto(),
+	}, nil
+}
+
+func (s *Server) StopDeployment(ctx context.Context, req *pb.StopDeploymentRequest) (*pb.StopDeploymentResponse, error) {
+	var deployment model.Deployment
+	result := s.db.First(&deployment, "id = ?", req.Id)
+	if result.Error != nil {
+		s.logger.Error("Failed to find deployment", slog.String("error", result.Error.Error()),
+			slog.String("deployment_id", req.Id))
+		return &pb.StopDeploymentResponse{}, result.Error
+	}
+
+	// Update deployment status and end time
+	deployment.Status = "stopped"
+	deployment.EndTime = time.Now()
+	deployment.Duration = deployment.EndTime.Sub(deployment.StartTime)
+
+	result = s.db.Save(&deployment)
+	if result.Error != nil {
+		s.logger.Error("Failed to stop deployment", slog.String("error", result.Error.Error()),
+			slog.String("deployment_id", req.Id))
+		return &pb.StopDeploymentResponse{}, result.Error
+	}
+
+	return &pb.StopDeploymentResponse{
+		Deployment: deployment.ToProto(),
 	}, nil
 }

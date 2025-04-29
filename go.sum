@@ -4,8 +4,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
 github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-github.com/SmartAPIForge/protos v1.4.0 h1:+ABytQ5rag22MOy8ZQ+BkwWOz2OB+Yycg5lZA4yXgh8=
-github.com/SmartAPIForge/protos v1.4.0/go.mod h1:iBAj5fpUwaXTQiGOQyr1IIqGEIA0ZmOlDF3Q3UWWCL8=
+github.com/SmartAPIForge/protos v1.8.0 h1:EDfTVmyyHmpmvAiKizYPRkhMYMvoDaX3dBRDG55XfZg=
+github.com/SmartAPIForge/protos v1.8.0/go.mod h1:iBAj5fpUwaXTQiGOQyr1IIqGEIA0ZmOlDF3Q3UWWCL8=
 github.com/actgardner/gogen-avro/v10 v10.1.0/go.mod h1:o+ybmVjEa27AAr35FRqU98DJu1fXES56uXniYFv4yDA=
 github.com/actgardner/gogen-avro/v10 v10.2.1/go.mod h1:QUhjeHPchheYmMDni/Nx7VB0RsT/ee8YIgGY/xpEQgQ=
 github.com/actgardner/gogen-avro/v9 v9.1.0/go.mod h1:nyTj6wPqDJoxM3qdnjcLv+EnMDSDFqE0qDpva2QRmKc=

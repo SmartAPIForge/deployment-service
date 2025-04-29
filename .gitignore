@@ -3,3 +3,6 @@
 
 ansible/*
 !ansible/template/
+
+config/*
+!config/local.yaml
