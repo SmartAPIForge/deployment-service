@@ -69,8 +69,11 @@ jobs:
 
       - name: Run deployment
         run: |
+          # Kill any processes using the ports
+          lsof -ti:50071 | xargs kill -9 2>/dev/null || true
+          
           go build ./cmd/deployment/main.go
-          ./main -config=./config/prod.yaml
+          nohup ./main -config=./config/prod.yaml > deployment.log 2>&1 &
           
           echo "✅ Deployment successful!"
 
@@ -82,6 +85,3 @@ jobs:
           
           # Remove dangling images to save disk space
           docker image prune -f
-          
-          # Kill any processes using the ports
-          lsof -ti:50071 | xargs kill -9 2>/dev/null || true
