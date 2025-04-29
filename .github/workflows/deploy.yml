@@ -37,10 +37,10 @@ jobs:
       - name: Install Ansible
         run: |
           # Update package list
-          sudo apt-get update
+          apt-get update
           
           # Install Ansible
-          sudo apt-get install -y ansible
+          apt-get install -y ansible
           
           # Verify Ansible installation
           ansible --version
