@@ -53,7 +53,7 @@ jobs:
                 enabled: true
           postgres_db:
             host: "${{ secrets.POSTGRES_HOST }}"
-            port: "${{ secrets.POSTGRES_PORT }}"
+            port: ${{ secrets.POSTGRES_PORT }}
             user: "${{ secrets.POSTGRES_USER }}"
             password: "${{ secrets.POSTGRES_PASSWORD }}"
             db_name: "${{ secrets.POSTGRES_DB }}"
