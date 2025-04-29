@@ -101,7 +101,7 @@ func (p *Producer) PublishDeployPayload(owner, name, url string) error {
 	}, deliveryChan)
 
 	if err != nil {
-		return fmt.Errorf("failed to produce msg: %w", err)
+		return fmt.Errorf("failed to produce message: %w", err)
 	}
 
 	e := <-deliveryChan

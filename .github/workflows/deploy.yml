@@ -35,15 +35,12 @@ jobs:
           go-version: 1.23
 
       - name: Install Ansible
-        run: |
-          # Update package list
-          apt-get update
-          
-          # Install Ansible
-          apt-get install -y ansible
-          
-          # Verify Ansible installation
-          ansible --version
+        uses: alex-oleshkevich/setup-ansible@v1.0.1
+        with:
+          version: "9.3.0"
+
+      - name: Verify Ansible installation
+        run: ansible --version
 
       - name: Install dependencies
         run: go mod tidy
