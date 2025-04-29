@@ -29,6 +29,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.23
+
+      - name: Install dependencies
+        run: go mod tidy
+
       - name: Create production config
         run: |
           cat > config/prod.yaml << EOL
@@ -51,9 +59,18 @@ jobs:
             db_name: "${{ secrets.POSTGRES_DB }}"
           EOL
 
+      - name: Build and deploy with docker-compose
+        run: |
+          # Stop existing containers if running
+          docker-compose down || true
+          
+          # Build and start the services
+          docker-compose up -d --build
+
       - name: Run deployment
         run: |
-          task init
+          go build ./cmd/deployment/main.go
+          ./main -config=./config/prod.yaml
           
           echo "✅ Deployment successful!"
 
