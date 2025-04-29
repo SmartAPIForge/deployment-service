@@ -98,7 +98,9 @@ func (h *DeploymentRequestHandler) HandleMessage(key []byte, value []byte) error
 		return err
 	}
 
-	if err := h.kafkaProducer.PublishProjectStatus(deploymentID, "DEPLOY_PENDING"); err != nil {
+	projectId := fmt.Sprintf("%s:%s", deploymentMessage.Owner, deploymentMessage.Name)
+
+	if err := h.kafkaProducer.PublishProjectStatus(projectId, "DEPLOY_PENDING"); err != nil {
 		h.logger.Error("Failed to publish deployment status", slog.String("error", err.Error()))
 		return err
 	}
@@ -116,7 +118,7 @@ func (h *DeploymentRequestHandler) HandleMessage(key []byte, value []byte) error
 			if err := h.db.Save(deployment).Error; err != nil {
 				h.logger.Error("Failed to update deployment status", slog.String("error", err.Error()))
 			}
-			if err := h.kafkaProducer.PublishProjectStatus(deploymentID, "DEPLOY_FAIL"); err != nil {
+			if err := h.kafkaProducer.PublishProjectStatus(projectId, "DEPLOY_FAIL"); err != nil {
 				h.logger.Error("Failed to publish deployment status", slog.String("error", err.Error()))
 			}
 			return
@@ -129,7 +131,7 @@ func (h *DeploymentRequestHandler) HandleMessage(key []byte, value []byte) error
 			if err := h.db.Save(deployment).Error; err != nil {
 				h.logger.Error("Failed to update deployment status", slog.String("error", err.Error()))
 			}
-			if err := h.kafkaProducer.PublishProjectStatus(deploymentID, "DEPLOY_FAIL"); err != nil {
+			if err := h.kafkaProducer.PublishProjectStatus(projectId, "DEPLOY_FAIL"); err != nil {
 				h.logger.Error("Failed to publish deployment status", slog.String("error", err.Error()))
 			}
 			return
@@ -140,7 +142,7 @@ func (h *DeploymentRequestHandler) HandleMessage(key []byte, value []byte) error
 		if err := h.db.Save(deployment).Error; err != nil {
 			h.logger.Error("Failed to update deployment status", slog.String("error", err.Error()))
 		}
-		if err := h.kafkaProducer.PublishProjectStatus(deploymentID, "DEPLOY_SUCCESS"); err != nil {
+		if err := h.kafkaProducer.PublishProjectStatus(projectId, "DEPLOY_SUCCESS"); err != nil {
 			h.logger.Error("Failed to publish deployment status", slog.String("error", err.Error()))
 		}
 		if err := h.kafkaProducer.PublishDeployPayload(deploymentMessage.Owner, deploymentMessage.Name, deploymentURL); err != nil {
