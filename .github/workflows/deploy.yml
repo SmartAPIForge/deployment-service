@@ -69,9 +69,6 @@ jobs:
 
       - name: Build and deploy with docker-compose
         run: |
-          # Stop existing containers if running
-          docker-compose down || true
-          
           # Build and start the services
           docker-compose up -d --build
 

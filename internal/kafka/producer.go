@@ -59,6 +59,7 @@ func (p *Producer) PublishProjectStatus(id string, status string) error {
 			Topic:     &topic,
 			Partition: kafka.PartitionAny,
 		},
+		Key:   []byte(id),
 		Value: value,
 	}, deliveryChan)
 

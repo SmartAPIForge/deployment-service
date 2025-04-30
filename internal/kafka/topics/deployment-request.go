@@ -98,7 +98,7 @@ func (h *DeploymentRequestHandler) HandleMessage(key []byte, value []byte) error
 		return err
 	}
 
-	projectId := fmt.Sprintf("%s:%s", deploymentMessage.Owner, deploymentMessage.Name)
+	projectId := fmt.Sprintf("%s_%s", deploymentMessage.Owner, deploymentMessage.Name)
 
 	if err := h.kafkaProducer.PublishProjectStatus(projectId, "DEPLOY_PENDING"); err != nil {
 		h.logger.Error("Failed to publish deployment status", slog.String("error", err.Error()))
